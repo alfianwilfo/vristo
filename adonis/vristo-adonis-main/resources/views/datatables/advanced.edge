@@ -1,0 +1,905 @@
+@layout('components/layout/default')
+@section('content')
+
+<script defer src="{{ asset('assets/js/apexcharts.js') }}"></script>
+<script src="{{ asset('assets/js/simple-datatables.js') }}"></script>
+
+<div x-data="basic">
+    <div class="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
+        <div class="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5">
+                <path d="M19.0001 9.7041V9C19.0001 5.13401 15.8661 2 12.0001 2C8.13407 2 5.00006 5.13401 5.00006 9V9.7041C5.00006 10.5491 4.74995 11.3752 4.28123 12.0783L3.13263 13.8012C2.08349 15.3749 2.88442 17.5139 4.70913 18.0116C9.48258 19.3134 14.5175 19.3134 19.291 18.0116C21.1157 17.5139 21.9166 15.3749 20.8675 13.8012L19.7189 12.0783C19.2502 11.3752 19.0001 10.5491 19.0001 9.7041Z" stroke="currentColor" stroke-width="1.5" />
+                <path opacity="0.5" d="M7.5 19C8.15503 20.7478 9.92246 22 12 22C14.0775 22 15.845 20.7478 16.5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+        </div>
+        <span class="ltr:mr-3 rtl:ml-3">Documentation: </span>
+        <a href="https://www.npmjs.com/package/simple-datatables" target="_blank" class="block hover:underline">
+            https://www.npmjs.com/package/simple-datatables
+        </a>
+    </div>
+    <div class="panel mt-6">
+        <h5 class="font-semibold text-lg dark:text-white-light">Advanced</h5>
+        <table id="myTable" class="whitespace-nowrap table-hover"></table>
+    </div>
+</div>
+<script>
+    document.addEventListener("alpine:init", () => {
+        Alpine.data("basic", () => ({
+            datatable: null,
+            countryList: [{
+                    code: "{{ asset('assets/images/flags/AE.svg') }}",
+                    name: 'United Arab Emirates'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/AR.svg') }}",
+                    name: 'Argentina'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/AT.svg') }}",
+                    name: 'Austria'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/AU.svg') }}",
+                    name: 'Australia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BE.svg') }}",
+                    name: 'Belgium'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BG.svg') }}",
+                    name: 'Bulgaria'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BN.svg') }}",
+                    name: 'Brunei'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BR.svg') }}",
+                    name: 'Brazil'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BY.svg') }}",
+                    name: 'Belarus'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/CA.svg') }}",
+                    name: 'Canada'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/CH.svg') }}",
+                    name: 'Switzerland'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/CL.svg') }}",
+                    name: 'Chile'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/CN.svg') }}",
+                    name: 'China'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/CO.svg') }}",
+                    name: 'Colombia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/CZ.svg') }}",
+                    name: 'Czech Republic'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/DE.svg') }}",
+                    name: 'Germany'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/DK.svg') }}",
+                    name: 'Denmark'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/DZ.svg') }}",
+                    name: 'Algeria'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/EC.svg') }}",
+                    name: 'Ecuador'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/EG.svg') }}",
+                    name: 'Egypt'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/ES.svg') }}",
+                    name: 'Spain'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/FI.svg') }}",
+                    name: 'Finland'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/FR.svg') }}",
+                    name: 'France'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/GB.svg') }}",
+                    name: 'United Kingdom'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/GR.svg') }}",
+                    name: 'Greece'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/HK.svg') }}",
+                    name: 'Hong Kong'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/HR.svg') }}",
+                    name: 'Croatia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/HU.svg') }}",
+                    name: 'Hungary'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/ID.svg') }}",
+                    name: 'Indonesia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/IE.svg') }}",
+                    name: 'Ireland'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/IL.svg') }}",
+                    name: 'Israel'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/IN.svg') }}",
+                    name: 'India'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/IT.svg') }}",
+                    name: 'Italy'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/JO.svg') }}",
+                    name: 'Jordan'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/JP.svg') }}",
+                    name: 'Japan'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/KE.svg') }}",
+                    name: 'Kenya'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/KH.svg') }}",
+                    name: 'Cambodia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/KR.svg') }}",
+                    name: 'South Korea'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/KZ.svg') }}",
+                    name: 'Kazakhstan'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/LA.svg') }}",
+                    name: 'Laos'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/LK.svg') }}",
+                    name: 'Sri Lanka'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/MA.svg') }}",
+                    name: 'Morocco'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/MM.svg') }}",
+                    name: 'Myanmar'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/MO.svg') }}",
+                    name: 'Macau'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/MX.svg') }}",
+                    name: 'Mexico'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/MY.svg') }}",
+                    name: 'Malaysia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/NG.svg') }}",
+                    name: 'Nigeria'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/NL.svg') }}",
+                    name: 'Netherlands'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/NO.svg') }}",
+                    name: 'Norway'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/NZ.svg') }}",
+                    name: 'New Zealand'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/PE.svg') }}",
+                    name: 'Peru'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/PH.svg') }}",
+                    name: 'Philippines'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/PK.svg') }}",
+                    name: 'Pakistan'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/PL.svg') }}",
+                    name: 'Poland'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/PT.svg') }}",
+                    name: 'Portugal'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/QA.svg') }}",
+                    name: 'Qatar'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/RO.svg') }}",
+                    name: 'Romania'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/RS.svg') }}",
+                    name: 'Serbia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/RU.svg') }}",
+                    name: 'Russia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/SA.svg') }}",
+                    name: 'Saudi Arabia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/SE.svg') }}",
+                    name: 'Sweden'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/SG.svg') }}",
+                    name: 'Singapore'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/SK.svg') }}",
+                    name: 'Slovakia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/TH.svg') }}",
+                    name: 'Thailand'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/TN.svg') }}",
+                    name: 'Tunisia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/TR.svg') }}",
+                    name: 'Turkey'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/TW.svg') }}",
+                    name: 'Taiwan'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/UK.svg') }}",
+                    name: 'Ukraine'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/UG.svg') }}",
+                    name: 'Uganda'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/US.svg') }}",
+                    name: 'United States'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/VN.svg') }}",
+                    name: 'Vietnam'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/ZA.svg') }}",
+                    name: 'South Africa'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BA.svg') }}",
+                    name: 'Bosnia and Herzegovina'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/BD.svg') }}",
+                    name: 'Bangladesh'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/EE.svg') }}",
+                    name: 'Estonia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/IQ.svg') }}",
+                    name: 'Iraq'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/LU.svg') }}",
+                    name: 'Luxembourg'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/LV.svg') }}",
+                    name: 'Latvia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/MK.svg') }}",
+                    name: 'North Macedonia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/SI.svg') }}",
+                    name: 'Slovenia'
+                },
+                {
+                    code: "{{ asset('assets/images/flags/PA.svg') }}",
+                    name: 'Panama'
+                },
+            ],
+            init() {
+                this.datatable = new simpleDatatables.DataTable('#myTable', {
+                    data: {
+                        headings: ["ID", "User", "Country", "Email", "Progress", "Phone",
+                            "<div class='text-center'>Rate</div>", "Progress", "Status"
+                        ],
+                        data: [
+                            [
+                              1,
+                              [
+                                "{{ asset('assets/images/profile-1.jpeg') }}",
+                                'Caroline Jensen',
+                              ],
+                              '',
+                              'carolinejensen@zidant.com',
+                              39,
+                              '+1 (821) 447-3782',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              2,
+                              [
+                                "{{ asset('assets/images/profile-2.jpeg') }}",
+                                'Celeste Grant',
+                              ],
+                              '',
+                              'celestegrant@polarax.com',
+                              32,
+                              '+1 (838) 515-3408',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              3,
+                              [
+                                "{{ asset('assets/images/profile-3.jpeg') }}",
+                                'Tillman Forbes',
+                              ],
+                              '',
+                              'tillmanforbes@manglo.com',
+                              26,
+                              '+1 (969) 496-2892',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              4,
+                              [
+                                "{{ asset('assets/images/profile-4.jpeg') }}",
+                                'Daisy Whitley',
+                              ],
+                              '',
+                              'daisywhitley@applideck.com',
+                              21,
+                              '+1 (861) 564-2877',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              5,
+                              [
+                                "{{ asset('assets/images/profile-5.jpeg') }}",
+                                'Weber Bowman',
+                              ],
+                              '',
+                              'weberbowman@volax.com',
+                              26,
+                              '+1 (962) 466-3483',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              6,
+                              [
+                                "{{ asset('assets/images/profile-6.jpeg') }}",
+                                'Buckley Townsend',
+                              ],
+                              '',
+                              'buckleytownsend@orbaxter.com',
+                              40,
+                              '+1 (884) 595-2643',
+                              '',
+                              '',
+                              ''
+                              ],
+                            [
+                              7,
+                              [
+                                "{{ asset('assets/images/profile-7.jpeg') }}",
+                                'Latoya Bradshaw',
+                              ],
+                              '',
+                              'latoyabradshaw@opportech.com',
+                              24,
+                              '+1 (906) 474-3155',
+                              '',
+                              '',
+                              ''
+                              ],
+                            [
+                              8,
+                              [
+                                "{{ asset('assets/images/profile-8.jpeg') }}",
+                                'Kate Lindsay',
+                              ],
+                              '',
+                              'katelindsay@gorganic.com',
+                              24,
+                              '+1 (930) 546-2952',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              9,
+                              [
+                                "{{ asset('assets/images/profile-9.jpeg') }}",
+                                'Marva Sandoval',
+                              ],
+                              '',
+                              'marvasandoval@avit.com',
+                              28,
+                              '+1 (927) 566-3600',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              10,
+                              [
+                                "{{ asset('assets/images/profile-10.jpeg') }}",
+                                'Decker Russell',
+                              ],
+                              '',
+                              'deckerrussell@quilch.com',
+                              27,
+                              '+1 (846) 535-3283',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              11,
+                              [
+                                "{{ asset('assets/images/profile-11.jpeg') }}",
+                                'Odom Mills',
+                              ],
+                              '',
+                              'odommills@memora.com',
+                              34,
+                              '+1 (995) 525-3402',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              12,
+                              [
+                                "{{ asset('assets/images/profile-12.jpeg') }}",
+                                'Sellers Walters',
+                              ],
+                              '',
+                              'sellerswalters@zorromop.com',
+                              28,
+                              '+1 (830) 430-3157',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              13,
+                              [
+                                "{{ asset('assets/images/profile-13.jpeg') }}",
+                                'Wendi Powers',
+                              ],
+                              '',
+                              'wendipowers@orboid.com',
+                              31,
+                              '+1 (863) 457-2088',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              14,
+                              [
+                                "{{ asset('assets/images/profile-14.jpeg') }}",
+                                'Sophie Horn',
+                              ],
+                              '',
+                              'sophiehorn@snorus.com',
+                              22,
+                              '+1 (885) 418-3948',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              15,
+                              [
+                                "{{ asset('assets/images/profile-15.jpeg') }}",
+                                'Levine Rodriquez',
+                              ],
+                              '',
+                              'levinerodriquez@xth.com',
+                              27,
+                              '+1 (999) 565-3239',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              16,
+                              [
+                                "{{ asset('assets/images/profile-16.jpeg') }}",
+                                'Little Hatfield',
+                              ],
+                              '',
+                              'littlehatfield@comtract.com',
+                              33,
+                              '+1 (812) 488-3011',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              17,
+                              [
+                                "{{ asset('assets/images/profile-17.jpeg') }}",
+                                'Larson Kelly',
+                              ],
+                              '',
+                              'larsonkelly@zidant.com',
+                              20,
+                              '+1 (892) 484-2162',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              18,
+                              [
+                                "{{ asset('assets/images/profile-18.jpeg') }}",
+                                'Kendra Molina',
+                              ],
+                              '',
+                              'kendramolina@sureplex.com',
+                              31,
+                              '+1 (920) 528-3330',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              19,
+                              [
+                                "{{ asset('assets/images/profile-19.jpeg') }}",
+                                'Ebony Livingston',
+                              ],
+                              '',
+                              'ebonylivingston@danja.com',
+                              33,
+                              '+1 (970) 591-3039',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              20,
+                              [
+                                "{{ asset('assets/images/profile-20.jpeg') }}",
+                                'Kaufman Rush',
+                              ],
+                              '',
+                              'kaufmanrush@euron.com',
+                              39,
+                              '+1 (924) 463-2934',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              21,
+                              [
+                                "{{ asset('assets/images/profile-21.jpeg') }}",
+                                'Frank Hays',
+                              ],
+                              '',
+                              'frankhays@illumity.com',
+                              31,
+                              '+1 (930) 577-2670',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              22,
+                              [
+                                "{{ asset('assets/images/profile-22.jpeg') }}",
+                                'Carmella Mccarty',
+                              ],
+                              '',
+                              'carmellamccarty@sybixtex.com',
+                              21,
+                              '+1 (876) 456-3218',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              23,
+                              [
+                                "{{ asset('assets/images/profile-23.jpeg') }}",
+                                'Massey Owen',
+                              ],
+                              '',
+                              'masseyowen@zedalis.com',
+                              40,
+                              '+1 (917) 567-3786',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              24,
+                              [
+                                "{{ asset('assets/images/profile-24.jpeg') }}",
+                                'Lottie Lowery',
+                              ],
+                              '',
+                              'lottielowery@dyno.com',
+                              36,
+                              '+1 (912) 539-3498',
+                              '',
+                              '',
+                              ''
+                            ],
+                            [
+                              25,
+                              [
+                                "{{ asset('assets/images/profile-25.jpeg') }}",
+                                'Addie Luna',
+                              ],
+                              '',
+                              'addieluna@multiflex.com',
+                              32,
+                              '+1 (962) 537-2981',
+                              '',
+                              '',
+                              ''
+                            ],
+                        ]
+                    },
+                    searchable: false,
+                    perPage: 10,
+                    perPageSelect: [10, 20, 30, 50, 100],
+                    columns: [{
+                            select: 0,
+                            render: (data, cell, row) => {
+                                return `<strong class="text-info">#${ data}</strong>`;
+                            },
+                        },
+                        {
+                            select: 1,
+                            render: (data, cell, row) => {
+                              var temp = data.split(',')
+                                return `<div class="flex items-center gap-2">
+                                                <img src="${temp[0]}" class="w-9 h-9 rounded-full max-w-none" alt="user-profile" />
+                                                <div class="font-semibold">${ temp[1] }</div>
+                                        </div>`
+                            },
+                        },
+                        {
+                            select: 2,
+                            render: (data, cell, row) => {
+                                return `<div class="flex items-center gap-2">
+                                            <img width="24" src="${this.getCountry().code}" class="max-w-none" alt="user profile" />
+                                            <div>${ this.getCountry().name }</div>
+                                        </div>`
+                            },
+                            sortable: false,
+                        },
+                        {
+                            select: 3,
+                            render: (data, cell, row) => {
+                                return `<a href="mailto:${data}" class="text-primary hover:underline">${ data }</a>`
+                            },
+                        },
+                        {
+                            select: 4,
+                            render: (data, cell, row) => {
+                                return `<div class="w-4/5 min-w-[100px] h-2.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex">
+                                            <div class="h-2.5 rounded-full rounded-bl-full text-center text-white text-xs bg-${this.randomStatusColor()}" style="width:${this.getRandomNumber(15, 100)}%"></div>
+                                        </div>`
+                            },
+                            sortable: false,
+                        },
+                        {
+                            select: 6,
+                            render: (data, cell, row) => {
+                                let str =
+                                    '<div class="flex items-center justify-center text-warning">';
+                                for (let i = 0; i < this.getRandomNumber(1,
+                                        5); i++) {
+                                    str += `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-warning">
+                                                <path d="M9.15316 5.40838C10.4198 3.13613 11.0531 2 12 2C12.9469 2 13.5802 3.13612 14.8468 5.40837L15.1745 5.99623C15.5345 6.64193 15.7144 6.96479 15.9951 7.17781C16.2757 7.39083 16.6251 7.4699 17.3241 7.62805L17.9605 7.77203C20.4201 8.32856 21.65 8.60682 21.9426 9.54773C22.2352 10.4886 21.3968 11.4691 19.7199 13.4299L19.2861 13.9372C18.8096 14.4944 18.5713 14.773 18.4641 15.1177C18.357 15.4624 18.393 15.8341 18.465 16.5776L18.5306 17.2544C18.7841 19.8706 18.9109 21.1787 18.1449 21.7602C17.3788 22.3417 16.2273 21.8115 13.9243 20.7512L13.3285 20.4768C12.6741 20.1755 12.3469 20.0248 12 20.0248C11.6531 20.0248 11.3259 20.1755 10.6715 20.4768L10.0757 20.7512C7.77268 21.8115 6.62118 22.3417 5.85515 21.7602C5.08912 21.1787 5.21588 19.8706 5.4694 17.2544L5.53498 16.5776C5.60703 15.8341 5.64305 15.4624 5.53586 15.1177C5.42868 14.773 5.19043 14.4944 4.71392 13.9372L4.2801 13.4299C2.60325 11.4691 1.76482 10.4886 2.05742 9.54773C2.35002 8.60682 3.57986 8.32856 6.03954 7.77203L6.67589 7.62805C7.37485 7.4699 7.72433 7.39083 8.00494 7.17781C8.28555 6.96479 8.46553 6.64194 8.82547 5.99623L9.15316 5.40838Z" stroke="currentColor" stroke-width="1.5" />
+                                            </svg>`;
+                                }
+                                str += '</div>';
+                                return str;
+                            },
+                            sortable: false,
+                        },
+                        {
+                            select: 7,
+                            render: (data, cell, row) => {
+                                return `<div style="width: 150px" class="overflow-hidden"> <div class="progress-chart"></div></div>`
+                            },
+                            sortable: false,
+                        },
+                        {
+                            select: 8,
+                            render: (data, cell, row) => {
+                                return `<span class="badge badge-outline-${this.randomStatusColor()}">${ this.randomStatus() }</span>`
+                            },
+                            sortable: false,
+                        },
+                    ],
+                    firstLast: true,
+                    firstText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                    lastText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                    prevText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                    nextText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                    labels: {
+                        perPage: "{select}"
+                    },
+                    layout: {
+                        top: "{search}",
+                        bottom: "{info}{select}{pager}",
+                    },
+                });
+
+                this.datatable.on('datatable.sort', () => {
+                    this.initChart();
+                });
+
+                this.datatable.on('datatable.page', () => {
+                    this.initChart();
+                });
+
+                this.datatable.on('datatable.perpage', () => {
+                    this.initChart();
+                });
+
+                setTimeout(() => {
+                    this.initChart();
+                }, 300);
+
+            },
+
+            initChart() {
+                const ele = document.querySelectorAll('.progress-chart');
+                let chart = [];
+                for (let i = 0; i < ele.length; i++) {
+                    ele[i].innerHTML = '';
+                    chart[i] = new ApexCharts(ele[i], this.chart_options);
+                    chart[i].render();
+                }
+            },
+
+            get chart_options() {
+                let option = {
+                    series: [{
+                        data: [21, 9, 36, 12, 44, 25, 59]
+                    }],
+                    chart: {
+                        type: 'line',
+                        height: 30,
+                        sparkline: {
+                            enabled: true
+                        }
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                        width: 2
+                    },
+                    markers: {
+                        size: [4, 7],
+                        strokeWidth: 0
+                    },
+                    colors: [this.randomColor()],
+                    grid: {
+                        padding: {
+                            top: 5,
+                            bottom: 5
+                        }
+                    },
+                    tooltip: {
+                        x: {
+                            show: false
+                        },
+                        y: {
+                            title: {
+                                formatter: () => {
+                                    return '';
+                                },
+                            },
+                        },
+                    },
+                };
+                return option;
+            },
+
+            randomColor() {
+                const color = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                const random = Math.floor(Math.random() * color.length);
+                return color[random];
+            },
+
+            randomStatusColor() {
+                const color = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
+                const random = Math.floor(Math.random() * color.length);
+                return color[random];
+            },
+
+            randomStatus() {
+                const status = ['PAID', 'APPROVED', 'FAILED', 'CANCEL', 'SUCCESS', 'PENDING',
+                    'COMPLETE'
+                ];
+                const random = Math.floor(Math.random() * status.length);
+                return status[random];
+            },
+
+            getRandomNumber(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
+
+            getCountry() {
+                const random = Math.floor(Math.random() * this.countryList.length);
+                return this.countryList[random];
+            },
+        }));
+    });
+</script>
+
+@end

@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    html {
+        @apply scroll-smooth;
+    }
+
+    .btn {
+        @apply inline-flex items-center gap-1 rounded-md border border-primary bg-primary px-4 py-2 font-semibold text-white duration-500 hover:bg-black hover:border-black;
+    }
+    .btn-outline {
+        @apply border border-primary bg-transparent text-primary hover:bg-opacity-60;
+    }
+    .btn-white-outline {
+        @apply border-white bg-transparent text-white hover:bg-white hover:text-black hover:border-black;
+    }
+    .btn-success {
+        @apply border-success bg-success;
+    }
+
+    .sidebar ul a.router-link-exact-active {
+        @apply bg-black-light/10 pl-6 text-primary;
+    }
+
+    .panel {
+        @apply relative rounded-md border border-transparent bg-white p-5 shadow;
+    }
+
+    table tr td,
+    table tr td a {
+        @apply whitespace-normal break-all;
+    }
+}
